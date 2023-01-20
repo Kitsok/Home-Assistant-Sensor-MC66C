@@ -5,7 +5,7 @@ from time import sleep
 import homeassistant.helpers.config_validation as cv
 import serial
 import voluptuous as vol
-from homeassistant.components.sensor import PLATFORM_SCHEMA
+from homeassistant.components.sensor import PLATFORM_SCHEMA, DOMAIN as SENSOR_DOMAIN, SensorDeviceClass, SensorEntity, SensorEntityDescription, SensorStateClass
 from homeassistant.const import CONF_NAME, CONF_PORT, CONF_RESOURCES, CONF_SCAN_INTERVAL
 from homeassistant.helpers.entity import Entity
 from homeassistant.util import Throttle
@@ -43,7 +43,7 @@ def setup_platform(hass, config, add_entities, discovery_info=None):
         sensor_type = resource.lower()
 
         if sensor_type not in SENSOR_TYPES:
-            SENSOR_TYPES[sensor_type] = [sensor_type.title(), "", "mdi:eye"]
+            SENSOR_TYPES[sensor_type] = [sensor_type.title(), "", "mdi:eye", None, None]
 
         entities.append(MC66CSensor(name, reader, sensor_type))
 
@@ -133,8 +133,19 @@ class MC66CSensor(Entity):
         self._icon = SENSOR_TYPES[self.type][3]
         self._state = None
         self._unique_id = "{}_{}_{}".format(DOMAIN, name, SENSOR_TYPES[self.type][1])
+        self._device_class = SENSOR_TYPES[self.type][4]
+        self._state_class = SENSOR_TYPES[self.type][5]
 
         self.update()
+
+    @property
+    def device_class(self):
+        """Return the device class of the sensor."""
+        return self._device_class
+
+    def state_class(self):
+        """Return the state class of the sensor."""
+        return self._state_class
 
     @property
     def name(self):
