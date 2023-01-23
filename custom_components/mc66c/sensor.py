@@ -135,6 +135,7 @@ class MC66CSensor(Entity):
         self._unique_id = "{}_{}_{}".format(DOMAIN, name, SENSOR_TYPES[self.type][1])
         self._device_class = SENSOR_TYPES[self.type][4]
         self._state_class = SENSOR_TYPES[self.type][5]
+        self.entity_description = SensorEntityDescription(device_class=self._device_class, state_class=self._state_class, icon=self._icon) # FIXME May be other files are neccessary also
 
         self.update()
 
